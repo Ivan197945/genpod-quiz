@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GenPod Quiz — Episode 1 · David Johnston</title>
+  <meta name="description" content="Квіз по першому епізоду GenPod з David Johnston. Перевір скільки ти запам'ятав!">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f9f9f8;
+      --surface: #ffffff;
+      --surface2: #f4f4f2;
+      --border: rgba(0,0,0,0.1);
+      --border2: rgba(0,0,0,0.18);
+      --text: #0a0a0a;
+      --text2: #555;
+      --text3: #999;
+      --accent: #0a0a0a;
+      --green: #22c55e;
+      --red: #ef4444;
+      --radius: 10px;
+      --radius-sm: 6px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #111;
+        --surface: #1a1a1a;
+        --surface2: #222;
+        --border: rgba(255,255,255,0.1);
+        --border2: rgba(255,255,255,0.2);
+        --text: #f0f0f0;
+        --text2: #aaa;
+        --text3: #666;
+        --accent: #f0f0f0;
+      }
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'IBM Plex Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 2rem 1rem 4rem;
+    }
+
+    .page-header {
+      width: 100%;
+      max-width: 620px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2.5rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-logo {
+      width: 36px; height: 36px;
+      background: #0a0a0a;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .brand-logo svg { display: block; }
+
+    .brand-text { display: flex; flex-direction: column; gap: 1px; }
+
+    .brand-name {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.2px;
+    }
+
+    .brand-ep {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      color: var(--text3);
+      letter-spacing: 0.3px;
+    }
+
+    .score-pill {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      color: var(--text2);
+      border: 0.5px solid var(--border2);
+      border-radius: 20px;
+      padding: 5px 14px;
+      background: var(--surface);
+    }
+
+    .card {
+      width: 100%;
+      max-width: 620px;
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.75rem;
+    }
+
+    .progress-track {
+      height: 2px;
+      background: var(--border);
+      border-radius: 1px;
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 1px;
+      transition: width 0.4s ease;
+    }
+
+    .q-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      color: var(--text3);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 0.6rem;
+    }
+
+    .type-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-family: 'IBM Plex Mono', monospace;
+      padding: 2px 9px;
+      border-radius: 4px;
+      margin-bottom: 0.85rem;
+      border: 0.5px solid;
+    }
+
+    .badge-fact   { background: #f0fdf4; color: #166534; border-color: #a7f3d0; }
+    .badge-quote  { background: #f0f4ff; color: #3451b2; border-color: #c0cfff; }
+    .badge-belief { background: #fdf4ff; color: #7e22ce; border-color: #e9d5ff; }
+
+    @media (prefers-color-scheme: dark) {
+      .badge-fact   { background: #052e16; color: #4ade80; border-color: #14532d; }
+      .badge-quote  { background: #1e1b4b; color: #818cf8; border-color: #312e81; }
+      .badge-belief { background: #2e1065; color: #c084fc; border-color: #4a1d96; }
+    }
+
+    .q-text {
+      font-size: 18px;
+      font-weight: 500;
+      line-height: 1.55;
+      margin-bottom: 1.25rem;
+      color: var(--text);
+    }
+
+    .quote-block {
+      border-left: 2px solid var(--accent);
+      padding: 10px 14px;
+      margin-bottom: 1.25rem;
+      background: var(--surface2);
+      border-radius: 0 6px 6px 0;
+    }
+
+    .quote-block p {
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--text2);
+      font-style: italic;
+    }
+
+    .opts { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1rem; }
+
+    .opt {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 16px;
+      background: var(--bg);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 14px;
+      color: var(--text);
+      text-align: left;
+      transition: border-color 0.15s, background 0.15s, transform 0.1s;
+      width: 100%;
+    }
+
+    .opt:hover:not(:disabled) {
+      border-color: var(--border2);
+      background: var(--surface2);
+    }
+
+    .opt:active:not(:disabled) { transform: scale(0.985); }
+
+    .opt-key {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      width: 24px; height: 24px;
+      border: 0.5px solid var(--border2);
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      color: var(--text3);
+      background: var(--surface);
+      transition: all 0.15s;
+    }
+
+    .opt.correct { border-color: #22c55e; background: #f0fdf4; }
+    .opt.correct .opt-key { background: #22c55e; color: #fff; border-color: #22c55e; }
+    .opt.wrong   { border-color: #ef4444; background: #fef2f2; opacity: 0.75; }
+    .opt.wrong .opt-key   { background: #ef4444; color: #fff; border-color: #ef4444; }
+    .opt.reveal  { border-color: #22c55e; background: #f0fdf4; }
+    .opt.reveal .opt-key  { background: #22c55e; color: #fff; border-color: #22c55e; }
+    .opt:disabled { cursor: default; }
+
+    @media (prefers-color-scheme: dark) {
+      .opt.correct { background: #052e16; }
+      .opt.wrong   { background: #450a0a; }
+      .opt.reveal  { background: #052e16; }
+    }
+
+    .feedback {
+      font-size: 13px;
+      line-height: 1.55;
+      padding: 11px 14px;
+      border-radius: var(--radius-sm);
+      margin-bottom: 1rem;
+      display: none;
+    }
+
+    .feedback.show { display: block; }
+    .feedback.ok { background: #f0fdf4; color: #15803d; border: 0.5px solid #86efac; }
+    .feedback.no { background: #fef2f2; color: #dc2626; border: 0.5px solid #fca5a5; }
+
+    @media (prefers-color-scheme: dark) {
+      .feedback.ok { background: #052e16; color: #4ade80; border-color: #14532d; }
+      .feedback.no { background: #450a0a; color: #f87171; border-color: #7f1d1d; }
+    }
+
+    .next-btn {
+      width: 100%;
+      padding: 13px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      display: none;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .next-btn { background: #f0f0f0; color: #0a0a0a; }
+    }
+
+    .next-btn.show { display: block; }
+    .next-btn:hover { opacity: 0.82; }
+    .next-btn:active { transform: scale(0.98); }
+
+    /* Result */
+    .result { display: none; }
+    .result.show { display: block; }
+
+    .result-center {
+      text-align: center;
+      padding: 1rem 0 1.5rem;
+    }
+
+    .result-icon {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      background: #0a0a0a;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.25rem;
+    }
+
+    .result-score {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 48px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .result-label {
+      font-size: 14px;
+      color: var(--text2);
+      margin-top: 6px;
+      margin-bottom: 1.5rem;
+    }
+
+    .breakdown {
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      margin-bottom: 1.25rem;
+    }
+
+    .bd-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 11px 14px;
+      border-bottom: 0.5px solid var(--border);
+      font-size: 13px;
+      gap: 10px;
+    }
+
+    .bd-row:last-child { border-bottom: none; }
+
+    .bd-q { color: var(--text2); flex: 1; line-height: 1.45; }
+    .bd-q strong { color: var(--text); font-weight: 500; display: block; }
+    .bd-icon { font-size: 15px; flex-shrink: 0; }
+
+    .restart-btn {
+      width: 100%;
+      padding: 13px;
+      background: transparent;
+      color: var(--text);
+      border: 0.5px solid var(--border2);
+      border-radius: var(--radius-sm);
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .restart-btn:hover { background: var(--surface2); }
+
+    .quiz-main.hide { display: none; }
+
+    footer {
+      margin-top: 2rem;
+      font-size: 11px;
+      font-family: 'IBM Plex Mono', monospace;
+      color: var(--text3);
+      text-align: center;
+    }
+
+    footer a { color: var(--text3); text-decoration: underline; }
+
+    @media (max-width: 480px) {
+      .card { padding: 1.25rem; }
+      .q-text { font-size: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="page-header">
+    <div class="brand">
+      <div class="brand-logo">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <circle cx="10" cy="10" r="4" fill="#00ff88"/>
+          <circle cx="10" cy="3"  r="1.5" fill="#fff" opacity="0.4"/>
+          <circle cx="10" cy="17" r="1.5" fill="#fff" opacity="0.4"/>
+          <circle cx="3"  cy="10" r="1.5" fill="#fff" opacity="0.4"/>
+          <circle cx="17" cy="10" r="1.5" fill="#fff" opacity="0.4"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <span class="brand-name">GenPod Quiz</span>
+        <span class="brand-ep">Episode 1 · David Johnston</span>
+      </div>
+    </div>
+    <div class="score-pill" id="scorePill">0 / 10</div>
+  </header>
+
+  <main class="card">
+
+    <!-- Quiz -->
+    <div class="quiz-main" id="quizMain">
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+      </div>
+      <div class="q-label" id="qLabel">ПИТАННЯ 1 З 10</div>
+      <div id="typeBadge"></div>
+      <div class="q-text" id="qText"></div>
+      <div id="quoteBlock"></div>
+      <div class="opts" id="opts"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="next-btn" id="nextBtn" onclick="next()">Далі →</button>
+    </div>
+
+    <!-- Result -->
+    <div class="result" id="result">
+      <div class="result-center">
+        <div class="result-icon">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+            <circle cx="16" cy="16" r="6" fill="#00ff88"/>
+            <circle cx="16" cy="4"  r="2.5" fill="#fff" opacity="0.4"/>
+            <circle cx="16" cy="28" r="2.5" fill="#fff" opacity="0.4"/>
+            <circle cx="4"  cy="16" r="2.5" fill="#fff" opacity="0.4"/>
+            <circle cx="28" cy="16" r="2.5" fill="#fff" opacity="0.4"/>
+          </svg>
+        </div>
+        <div class="result-score" id="rScore">0/10</div>
+        <div class="result-label" id="rLabel"></div>
+      </div>
+      <div class="breakdown" id="breakdown"></div>
+      <button class="restart-btn" onclick="restart()">Спробувати ще раз</button>
+    </div>
+
+  </main>
+
+  <footer>
+    <a href="https://genlayer.com" target="_blank">genlayer.com</a> · GenPod Quiz
+  </footer>
+
+<script>
+const Qs = [
+  {
+    type:"fact", typeLabel:"ФАКТ", typeClass:"badge-fact",
+    q:"У якому році David Johnston почав інвестувати в Bitcoin?",
+    opts:["2010","2011","2012","2014"], ans:2,
+    explain:"David Johnston почав інвестувати в Bitcoin у 2012 році, після фінансової кризи 2008-го."
+  },
+  {
+    type:"quote", typeLabel:"ЦИТАТА", typeClass:"badge-quote",
+    q:"Хто сказав цю фразу?",
+    quote:"\"We can trust math instead of politicians. That's a big upgrade.\"",
+    opts:["Speaker B (ведучий)","David Johnston","Vitalik Buterin","Ray Dalio"], ans:1,
+    explain:"Це слова David Johnston про те, чому Bitcoin — краща альтернатива традиційній фінансовій системі."
+  },
+  {
+    type:"belief", typeLabel:"ПЕРЕКОНАННЯ", typeClass:"badge-belief",
+    q:"Скільки агентів David Johnston хоче мати до кінця року?",
+    opts:["10 агентів","50 агентів","100 агентів","1000 агентів"], ans:2,
+    explain:"Його мета — 100 агентів для щоденних задач: від бронювання ресторанів до додавання зустрічей у календар."
+  },
+  {
+    type:"fact", typeLabel:"ФАКТ", typeClass:"badge-fact",
+    q:"Як називається закон, який сформулював David Johnston?",
+    opts:["Johnston's Paradox","Johnston's Law","The Decentralization Principle","The Freedom Theorem"], ans:1,
+    explain:"Johnston's Law: «Everything that can be decentralized will be decentralized» — оголошено на конференції Coin Summit у 2014 році."
+  },
+  {
+    type:"quote", typeLabel:"ЦИТАТА", typeClass:"badge-quote",
+    q:"Яку систему David Johnston порівнює з централізованим AI?",
+    quote:"\"They got rid of the price system, and so they didn't have the information to know how to serve the people.\"",
+    opts:["Централізований AI","Радянський Союз","Система Visa/Mastercard","Державна медицина"], ans:1,
+    explain:"David Johnston використовує Радянський Союз як приклад того, що буває коли централізована система замінює органічну ринкову інформацію."
+  },
+  {
+    type:"belief", typeLabel:"ПЕРЕКОНАННЯ", typeClass:"badge-belief",
+    q:"Що, на думку David Johnston, є головним «вузьким місцем» у світі агентів?",
+    opts:["Обчислювальна потужність","Вартість транзакцій","Вміння описати задачу (agency)","Безпека смарт-контрактів"], ans:2,
+    explain:"«The bottleneck is shifting from doing the work to agency describing it» — вміння точно описати задачу стає важливішим за саме виконання."
+  },
+  {
+    type:"fact", typeLabel:"ФАКТ", typeClass:"badge-fact",
+    q:"Що таке Morpheus Virtual Machine (MVM)?",
+    opts:["Децентралізована біржа","Інфраструктура для смарт-агентів (inference, memory, tools, payments)","Форк Ethereum для AI","Протокол анонімних платежів"], ans:1,
+    explain:"MVM — це те саме для смарт-агентів, що EVM для смарт-контрактів: inference, memory, agentic tools та payment rail в одному."
+  },
+  {
+    type:"belief", typeLabel:"ПЕРЕКОНАННЯ", typeClass:"badge-belief",
+    q:"Що David Johnston вважає «другою половиною» поряд з грошовою свободою?",
+    opts:["Свобода пересування","Свобода інтелекту (AI)","Відкритий вихідний код","Децентралізовані DAO"], ans:1,
+    explain:"«Not your keys, not your AI» — свобода інтелекту (контроль над своїм AI) є другою половиною рівняння після грошової свободи."
+  },
+  {
+    type:"quote", typeLabel:"ЦИТАТА", typeClass:"badge-quote",
+    q:"Що David Johnston виявив у Google Maps?",
+    quote:"\"They had put in an ad into Google Maps to misdirect me because someone was paying them to do it.\"",
+    opts:["Він шукав ресторан і потрапив на конкурента","Він вів дитину до лікаря і реклама перенаправила до іншого лікаря","Він шукав офіс партнера і потрапив на фішинг","Він замовляв таксі і реклама змінила маршрут"], ans:1,
+    explain:"Він вів дитину до лікаря — реклама в Google Maps перенаправила до іншого. Це символ того, чим загрожує централізований AI."
+  },
+  {
+    type:"fact", typeLabel:"ФАКТ", typeClass:"badge-fact",
+    q:"Яка платіжна специфікація від Coinbase вразила David Johnston?",
+    opts:["ERC-20","x402","ERC-8004","BIP-39"], ans:1,
+    explain:"x402 від Coinbase у партнерстві з Cloudflare — стандарт атомарних мікроплатежів для агентів без API-ключів та підписок."
+  }
+];
+
+const KEYS = ["A","B","C","D"];
+let cur=0, score=0, answered=false, history=[];
+
+function render(){
+  const q=Qs[cur];
+  answered=false;
+  document.getElementById("qLabel").textContent=`ПИТАННЯ ${cur+1} З ${Qs.length}`;
+  document.getElementById("progressFill").style.width=`${(cur/Qs.length)*100}%`;
+  document.getElementById("scorePill").textContent=`${score} / ${Qs.length}`;
+  document.getElementById("typeBadge").innerHTML=`<span class="type-badge ${q.typeClass}">${q.typeLabel}</span>`;
+  document.getElementById("qText").textContent=q.q;
+  document.getElementById("quoteBlock").innerHTML=q.quote?`<div class="quote-block"><p>${q.quote}</p></div>`:"";
+  document.getElementById("feedback").className="feedback";
+  document.getElementById("nextBtn").className="next-btn";
+
+  const ol=document.getElementById("opts");
+  ol.innerHTML="";
+  q.opts.forEach((opt,i)=>{
+    const btn=document.createElement("button");
+    btn.className="opt";
+    btn.innerHTML=`<span class="opt-key">${KEYS[i]}</span><span>${opt}</span>`;
+    btn.onclick=()=>pick(i);
+    ol.appendChild(btn);
+  });
+}
+
+function pick(i){
+  if(answered)return;
+  answered=true;
+  const q=Qs[cur];
+  const ok=i===q.ans;
+  if(ok)score++;
+  history.push({q,chosen:i,ok});
+
+  document.querySelectorAll(".opt").forEach((btn,idx)=>{
+    btn.disabled=true;
+    if(idx===q.ans&&ok)btn.classList.add("correct");
+    else if(idx===i&&!ok)btn.classList.add("wrong");
+    else if(idx===q.ans&&!ok)btn.classList.add("reveal");
+  });
+
+  const fb=document.getElementById("feedback");
+  fb.textContent=(ok?"✓ Правильно! ":"✗ Не вгадав. ")+q.explain;
+  fb.className="feedback show "+(ok?"ok":"no");
+  document.getElementById("nextBtn").className="next-btn show";
+  document.getElementById("scorePill").textContent=`${score} / ${Qs.length}`;
+}
+
+function next(){
+  cur++;
+  if(cur>=Qs.length)showResult();
+  else render();
+}
+
+function showResult(){
+  document.getElementById("quizMain").className="quiz-main hide";
+  const rs=document.getElementById("result");
+  rs.className="result show";
+  document.getElementById("rScore").textContent=`${score}/${Qs.length}`;
+
+  let label="Починай слухати GenPod з самого початку 🎙️";
+  if(score>=9)label="Ти знаєш David Johnston краще за нього самого 🔥";
+  else if(score>=7)label="Справжній GenPod listener 🎧";
+  else if(score>=5)label="Непогано! Ще трохи і станеш OG 🚀";
+  document.getElementById("rLabel").textContent=label;
+
+  document.getElementById("breakdown").innerHTML=history.map(h=>{
+    const chosen=h.q.opts[h.chosen];
+    const correct=h.q.opts[h.q.ans];
+    return `<div class="bd-row">
+      <div class="bd-q">
+        <strong>${h.q.q.length>65?h.q.q.slice(0,65)+"…":h.q.q}</strong>
+        ${h.ok?correct:`❌ ${chosen} → ✓ ${correct}`}
+      </div>
+      <div class="bd-icon">${h.ok?"✅":"❌"}</div>
+    </div>`;
+  }).join("");
+}
+
+function restart(){
+  cur=0;score=0;answered=false;history=[];
+  document.getElementById("quizMain").className="quiz-main";
+  document.getElementById("result").className="result";
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
